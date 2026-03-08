@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumption Forecast - Green-Tech Inventory Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Consumption Forecast for {{ name }}</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                {% if error %}
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">Cannot Forecast</h4>
+                    <p>{{ error }}</p>
+                    <p>Please record at least one consumption entry before forecasting.</p>
+                    <a href="/consume" class="btn btn-sm btn-primary">Record Consumption</a>
+                </div>
+                {% elif prediction and item %}
+                <!-- Forecast Card -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">AI-Powered Forecast</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="text-muted">Current Inventory</p>
+                                <p class="h4">{{ item.quantity }} units</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Predicted Consumption (7 days)</p>
+                                <p class="h4">{{ "%.1f"|format(prediction) }} units</p>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <small>This forecast uses AI to analyze consumption trends and predict future usage. If AI is unavailable, it falls back to historical averages.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supply Warning & Suggestions -->
+                {% if suggestions.will_runout %}
+                <div class="card border-warning mb-4">
+                    <div class="card-header bg-warning">
+                        <h5 class="card-title mb-0">⚠️ Supply Alert: Stock May Run Out</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Based on the forecast, you may run short by <strong>{{ suggestions.shortfall }} units</strong> 
+                            over the next 7 days. Consider ordering soon to avoid stockouts.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sustainable Suppliers -->
+                <h4 class="mt-4 mb-3">Recommended Sustainable Suppliers</h4>
+                <div class="alert alert-success mb-4">
+                    <strong>🌱 Green-Tech Tip:</strong> These suppliers prioritize sustainable practices, 
+                    local sourcing, and minimal environmental impact.
+                </div>
+
+                <div class="row">
+                    {% for supplier in suggestions.suppliers %}
+                    <div class="col-md-12 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ supplier.name }}</h6>
+                                <p class="card-text text-muted">📍 {{ supplier.distance }} away</p>
+                                
+                                <p class="small mb-2"><strong>Benefits:</strong></p>
+                                <ul class="small mb-2">
+                                    {% for benefit in supplier.benefits %}
+                                    <li>{{ benefit }}</li>
+                                    {% endfor %}
+                                </ul>
+                                
+                                <div class="alert alert-success alert-sm py-2 px-3" role="alert">
+                                    <small><strong>♻️ Sustainability:</strong> {{ supplier.sustainability }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <strong>💡 Tip:</strong> Contact these suppliers to compare pricing and availability. 
+                    Supporting sustainable suppliers helps reduce your environmental impact while maintaining reliable inventory.
+                </div>
+                {% else %}
+                <!-- No shortage alert -->
+                <div class="card border-success mb-4">
+                    <div class="card-header bg-success">
+                        <h5 class="card-title text-white mb-0">✓ Supply Status Good</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Your current inventory of <strong>{{ item.quantity }} units</strong> 
+                            should be sufficient to meet the predicted consumption of 
+                            <strong>{{ "%.1f"|format(prediction) }} units</strong> over the next 7 days.
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% else %}
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">Item Not Found</h4>
+                    <p>No item found with the name "{{ name }}".</p>
+                    <a href="/" class="btn btn-primary">Back to Inventory</a>
+                </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <a href="/" class="btn btn-secondary">Back to Inventory</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
