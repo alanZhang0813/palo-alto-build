@@ -6,6 +6,8 @@
 
 **Estimated Time Spent:** 6 hours
 
+**Youtube Link:** https://www.youtube.com/watch?v=OOkaXQAWccE
+
 ---
 
 ## Quick Start
